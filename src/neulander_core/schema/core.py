@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field, HttpUrl, computed_field
+from pydantic import BaseModel, Field, HttpUrl
 
 
 ##############################################################################
@@ -17,20 +17,15 @@ class DocIn(BaseModel):
         docmeta (Optional[str | dict]): Metadata associated with the document.
     """
 
-    docid: str = Field(description="Unique document identifier.")
-    docext: str = Field(
-        description="File name extension to be appended to docid to get filename."
+    docid: str = Field(description="Unique document or blob name.")
+    docpath: str = Field(
+        description="Path to document from root (/). Will be used for src and ignored for dest."
     )
     src: Any
     dest: Any
     docmeta: Optional[str | dict] = Field(
         description="Metadata associated with the document"
     )
-
-    @computed_field
-    @property
-    def docname(self) -> str:
-        return f"{self.docid.strip()}.{self.docext.strip(' .')}"
 
 
 class AzureBlobDocIn(DocIn):
