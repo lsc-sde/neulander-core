@@ -17,20 +17,23 @@ class DocIn(BaseModel):
         docmeta (Optional[str | dict]): Metadata associated with the document.
     """
 
-    docid: str = Field(description="Unique document identifier.")
+    docid: str = Field(description="Unique document or blob name.")
     docext: str = Field(
         description="File name extension to be appended to docid to get filename."
     )
     src: Any
     dest: Any
-    docmeta: Optional[str | dict] = Field(
-        description="Metadata associated with the document"
+    docmeta: Optional[dict] = Field(
+        description="Metadata associated with the document", default={}
     )
 
     @computed_field
     @property
     def docname(self) -> str:
-        return f"{self.docid.strip()}.{self.docext.strip(' .')}"
+        if self.docext.strip():
+            return f"{self.docid.strip()}.{self.docext.strip(' .')}"
+        else:
+            return self.docid
 
 
 class AzureBlobDocIn(DocIn):
